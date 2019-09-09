@@ -42,7 +42,11 @@ INFO: listener is running for  MESSAGES:CREATED
 
 ## Dependencies
 
-* "asciiart-logo": "^0.2.6"
-* "chalk": "^2.4.2",
-* "clear": "^0.1.0",
-* "webex": "^1.72.6"
+```json
+"dependencies": {
+  "asciiart-logo": "^0.2.6",
+  "chalk": "^2.4.2",
+  "clear": "^0.1.0",
+  "webex": "^1.72.6"
+}
+```
