@@ -39,7 +39,7 @@ INFO: starting listener on  localhost:5000
 INFO: listener is running for  MESSAGES:DELETED 
 INFO: listener is running for  MESSAGES:CREATED 
 ```
-**Tip**: you can use the [javabot](https://github.com/webex/javabot) to test how this app works. Start **javabot** with your access token and enter a localhost port, where **javabot** will listen to incoming messages. While both apps are running, open a room with the bot, whose access token you used and say **hello**. It should greet you back. :wave:
+**Tip**: you can use the [javabot](https://github.com/webex/javabot) to test how this app works. Start **javabot** with your access token and enter a localhost port, where **javabot** will listen to incoming messages. While both apps are running, open a Webex Teams space with the bot, whose access token you used and say **hello**. It should greet you back. :wave:
 
 ## Dependencies
 
