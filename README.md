@@ -26,8 +26,8 @@ Used to listen to events in Webex Teams and forward them to a localhost port for
   |                                                          |
   `----------------------------------------------------------'
 
-? Enter your access token > MzBlNzRmMDEtOGNjYS00ZjI5LTlmMWQtMTMxZjgxMTMxMTFiMGViMzAxNmEtZTRl_PF84_1eb65fdf-9643-417f-9974-ad72cae0e10f
-! MzBlNzRmMDEtOGNjYS00ZjI5LTlmMWQtMTMxZjgxMTMxMTFiMGViMzAxNmEtZTRl_PF84_1eb65fdf-9643-417f-9974-ad72cae0e10f
+? Enter your access token > AaBbCcDdEeFfGgHhIiJjAaBbCcDdEeFfGgHhIiJjAaBbCcDdEeFfGgHhIiJj_ABCD_1a2b3c4d-1234-abcd-9876-abcdefghijkl
+! AaBbCcDdEeFfGgHhIiJjAaBbCcDdEeFfGgHhIiJjAaBbCcDdEeFfGgHhIiJj_ABCD_1a2b3c4d-1234-abcd-9876-abcdefghijkl
 INFO: token authenticated as BeanBot
 ? Enter a port you will forward messages to > 5000
 ! 5000
