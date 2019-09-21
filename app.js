@@ -1,6 +1,6 @@
 const listener = require('./src/listener');
 const cli = require('./src/cli');
-const {fonts} = require('./util/fonts');
+const {fonts } = require('./util/fonts');
 
 let specs = {
     access_token: '',
@@ -45,8 +45,6 @@ function gatherSpecs() {
         console.log(fonts.error(reason));
         gatherSpecs();
     });
-
-
 }
 
 function gatherPort() {
@@ -62,7 +60,6 @@ function gatherPort() {
         } else {
             console.log(fonts.error('not a number'));
             gatherPort();
-
         }
 
     }).catch(reason => {
@@ -77,6 +74,16 @@ function gatherResource() {
 
     cli.requestResource().then(resource => {
 
+        if (Array.isArray(resource)) {
+            // user selected "all"
+            specs.selection.event = 'all';
+            for (let resource_name of resource) { 
+                listener.runListener(specs, cli.options[resource_name]);
+            }
+            return;
+        }
+
+        // Collect the event(s) for the selected resource 
         console.log(fonts.answer(
             resource.description.toUpperCase())
         );
@@ -87,9 +94,7 @@ function gatherResource() {
     }).catch(reason => {
         console.log(fonts.error(reason));
         gatherResource();
-
     });
-
 }
 
 /**
@@ -99,42 +104,37 @@ function gatherResource() {
  * */
 function gatherEvent(resource) {
 
-    cli.requestEvent(resource.events).then(
-        event => {
+    cli.requestEvent(resource.events).then(event => {
 
-            specs.selection.event = event;
-            console.log(fonts.info('starting listener on ') + fonts.highlight(` localhost:${specs.port} `));
-
-            //need to start the listener for each event
-            if (event === 'all') {
-
-                for (let e of resource.events) {
-
-                    //all is not supported in the SDK,
-                    //but still needed in the options to
-                    //allow it to be selected
-                    if (e === 'all') {
-                        continue;
-                    }
-                    specs.selection.event = e;
-                    listener.runListener(specs);
-                }
-            } else {
-                listener.runListener(specs);
-            }
-        }
-    ).catch(reason => {
-
+        specs.selection.event = event;
+        // register to receive events for this resource
+        // and define handlers for the requested event(s) 
+        listener.runListener(specs, resource);
+    }).catch(reason => {
         console.log(fonts.error(reason));
-
         gatherEvent(resource);
     });
-
 }
 
 
-cli.welcome();
-gatherSpecs();
+if ((process.env.TOKEN) && (process.env.PORT)) {
+    specs.port = parseInt(process.env.PORT);
+    specs.access_token = process.env.TOKEN;
+    listener.verifyAccessToken(process.env.TOKEN).then((person) => {
+        console.log(fonts.info(`token authenticated as ${person.displayName}`));
+        specs.selection.event = 'all';
+        for (let resource_object of cli.firehose_resource_names) { 
+            listener.runListener(specs, cli.options[resource_object]);
+        }
+        }).catch(reason => {
+            //token not authorized
+            console.log(fonts.error(reason));
+            process.exit(-1);
+      });
+} else {
+    cli.welcome();
+    gatherSpecs();
+}
 
 
 
