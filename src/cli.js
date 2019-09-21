@@ -1,6 +1,7 @@
 const readline = require('readline');
 const {fonts} = require('../util/fonts');
 
+const firehose_resource_names = ["rooms", "messages", "memberships"];
 const options = {
 
     rooms: {
@@ -28,7 +29,15 @@ const options = {
             'all',
             'created',
             'updated',
-            'seen',
+
+            // "seen" events correlate to a "read receipt"
+            // there are A LOT of these events
+            // there is no webhook for this event (yet)
+            // since this app is primarily meant as a webhook replacement
+            // we will not register for seen events.
+            // Uncomment this if your app wants to use them
+
+            //'seen',
             'deleted'
         ]
     }
@@ -126,6 +135,7 @@ function requestResource() {
 
         rl.question(fonts.question(
             'Select resource [ ' +
+            'a - all, ' +
             options.rooms.alias + ' - ' + options.rooms.description + ', '
             + options.messages.alias + ' - ' + options.messages.description + ', '
             + options.memberships.alias + ' - ' + options.memberships.description
@@ -137,6 +147,10 @@ function requestResource() {
                 if (resource_alias !== '') {
 
                     switch (resource_alias) {
+
+                        case 'a':
+                            resolve(firehose_resource_names);
+                            break;
 
                         case options.rooms.alias:
                             resolve(options.rooms);
@@ -209,12 +223,12 @@ function requestEvent(event_pool) {
                                     event.toUpperCase())
                                 );
 
-                                resolve(event)
+                                resolve(event);
                             }
                         }
 
                     } else {
-                        reject('event invalid')
+                        reject('event invalid');
                     }
 
                 } else {
@@ -229,6 +243,8 @@ function requestEvent(event_pool) {
 
 
 module.exports = {
+    firehose_resource_names,
+    options,
     welcome,
     requestToken,
     requestPort,
