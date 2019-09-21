@@ -44,22 +44,22 @@ function verifyAccessToken(accessToken) {
 
 /**
  * @param specs object with resource and event
+ * @param resource object describing the resource to register
  *
  * */
-function runListener(specs) {
+function runListener(specs, resource) {
 
     specifications = specs;
-    const resource = specs.selection.resource;
     const event = specs.selection.event;
+    const resource_object = resource;
 
-    _initializeWebex(specs.access_token);
     _startListener(resource, event);
 
     //Ctrl+C pushed for exit
     process.on('SIGINT', () =>{
 
         //nneds to run first to deregister listeners
-        _stopListener(resource, event);
+        _stopListener(resource_object, event);
 
         if (runningListeners === 0) {
             //all listeners were stopped
@@ -84,116 +84,78 @@ function _initializeWebex(accessToken) {
  *
  * */
 function _startListener(resource, event) {
+    const resource_name = resource.description;
+
     runningListeners++;
 
-    switch (resource) {
-        case options.messages.description:
+    // register the listener for events on the messages resource
+    webex[resource_name].listen().then(() => {
+        console.log(fonts.info(
+          `Listening for events from the ${resource_name} resource`));
 
-            webex.messages.listen().then(() => {
-
-                //logging a formatted info message in the console
-                console.log(fonts.info(
-                    'listener is running for ') +
-                    fonts.highlight(` ${resource.toUpperCase()}:${event.toUpperCase()} `)
-                );
-
-                webex.messages.on(event, request => {
-
-                    let request_string = JSON.stringify(request);
-
-                    _forwardRequest(request_string);
-
-                });
-
-
-
-            }).catch(reason => {
-                console.log(fonts.error(reason));
-            });
-
-            break;
-
-        case options.memberships.description:
-
-            webex.memberships.listen().then(() => {
-
-                console.log(fonts.info(
-                    'listener is running for ') +
-                    fonts.highlight(` ${resource.toUpperCase()}:${event.toUpperCase()} `)
-                );
-
-                webex.memberships.on(event, request => {
-
-                    let request_string = JSON.stringify(request);
-
-                    _forwardRequest(request_string);
-
-                });
-
-            }).catch(reason => {
-                console.log(fonts.error(reason));
-            });
-
-            break;
-
-        case options.rooms.description:
-
-            webex.rooms.listen().then(() => {
-
-                console.log(fonts.info(
-                    'listener is running for ') +
-                    fonts.highlight(` ${resource.toUpperCase()}:${event.toUpperCase()} `)
-                );
-
-                webex.rooms.on(event, request => {
-
-                    let request_string = JSON.stringify(request);
-
-                    _forwardRequest(request_string);
-
-                });
-
-            }).catch(reason => {
-                console.log(fonts.error(reason));
-            });
-            break;
-    }
+      //need to register a handler for each event type
+      if (event === 'all') {
+          //each event needs its own handler
+          //if user asked for all cycle through each 
+          //event type and register each handler
+          for (let event_name of resource.events) {
+            if (event_name === 'all') {
+              continue;
+            }
+            // Register a handler to forward the event
+            webex[resource_name].on(event_name, event_object => _forwardEvent(event_object));
+            console.log(fonts.info(
+                'Registered handler to forward  ' +
+                fonts.highlight(`${resource_name}:${event_name}`) + ' events'));
+        }
+    } else {
+        // Register a handler to forward the event
+        webex[resource_name].on(event, event_object => _forwardEvent(event_object));
+        console.log(fonts.info(
+          'Registered handler to forward  ') +
+          fonts.highlight(`${resource_name}:${event}`) + ' events');
+        }
+  }).catch(reason => {
+      console.log(fonts.error(reason));
+      process.exit(-1);
+  });    
 }
 
 function _stopListener(resource, event) {
-    console.log(
-        fonts.info(`stopping listener for ${resource.toUpperCase()}:${event.toUpperCase()}`)
-    );
+    const resource_name = resource.description;
+
     runningListeners--;
 
-    switch (resource) {
-        case options.messages.description:
-            webex.messages.stopListening();
-            webex.messages.off(event);
-
-            break;
-
-        case options.memberships.description:
-            webex.memberships.stopListening();
-            webex.memberships.off(event);
-            break;
-
-        case options.rooms.description:
-            webex.rooms.stopListening();
-            webex.rooms.off(event);
-            break;
+    console.log(fonts.info(
+        `stopping listener for ${resource_name.toUpperCase()}:${event.toUpperCase()}`)
+    );
+  // turn off the event listener
+    webex[resource_name].stopListening();
+    // deregister the handler(s) for this resource's event(s)
+    if (event === 'all') {
+        for (let event_name of resource.events) {
+            if (event_name === 'all') {
+                continue;
+            }
+            webex[resource_name].off(event_name);
+        }
+    } else {
+        webex[resource_name].off(event);
     }
 }
 
 /**
  * Routes incoming request to localhost:port.
  *
- * @param request JSON string of request
+ * @param event JSON string of request
  * */
-function _forwardRequest(request) {
+function _forwardEvent(event_object) {
+    let event = JSON.stringify(event_object);
 
     //logging info to the console
-    console.log(fonts.info('request received'));
+    console.log(fonts.info(
+      fonts.highlight(`${event_object.resource}:${event_object.event}`) +
+      ' received'));
 
     //gathering some details
     const options = {
@@ -202,7 +164,7 @@ function _forwardRequest(request) {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            'Content-Length': request.length
+            'Content-Length': event.length
         }
     };
 
@@ -215,12 +177,12 @@ function _forwardRequest(request) {
         console.log(fonts.error(error.message));
     });
 
-    //sending the request
-    req.write(request);
+    //sending the event
+    req.write(event);
     req.end();
 
-    console.log(fonts.info(`request forwarded to localhost:${specifications.port}`));
-    console.log(fonts.info(request));
+    console.log(fonts.info(`event forwarded to localhost:${specifications.port}`));
+    console.log(fonts.info(event));
 }
 
 module.exports = {
