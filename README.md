@@ -1,5 +1,7 @@
 # hookbuster
+
 ## Description
+
 This application demonstrates how to register for Webex Teams `message`, `membership` and `rooms` events via websocket using the Webex Javascript SDK.   Currently (as of September, 2019), the Webex JS SDK is the only way to receive Webex events via websocket.   This app is a simple node.js app that registers for events in Webex Teams via websocket, and forwards them to a localhost port for bots or apps that are listening on that port.   It is particularly useful for Webex Teams applications written in a language other than javascript that need to run behind a firewall, and cannot register for webhooks since they do not have a public IP address.
 
 ## Requirements
@@ -10,6 +12,7 @@ This application demonstrates how to register for Webex Teams `message`, `member
 * **npm**: will be used to install dependencies
 
 ## Install and run
+
 * clone the repo 
 * ```npm install```
 * ```node app.js```
@@ -43,11 +46,13 @@ INFO: Listening for events from the messages resource
 INFO: Registered handler to forward  messages:created events
 INFO: Registered handler to forward  messages:deleted events
 ```
-**Tip**: you can use the [javabot](https://github.com/webex/javabot) to test how this app works. Start **javabot** with your access token and enter a localhost port, where **javabot** will listen to incoming messages. While both apps are running, open a Webex Teams space with the bot, whose access token you used and say **hello**. It should greet you back. :wave:
+
+**Tip**: you can use the [javabot](https://github.com/WebexSamples/javabot) to test how this app works. Start **javabot** with your access token and enter a localhost port, where **javabot** will listen to incoming messages. While both apps are running, open a Webex Teams space with the bot, whose access token you used and say **hello**. It should greet you back. :wave:
 
 ## Usage -- deployment mode
 
 If the following environment variables are set:
+
 * TOKEN
 * PORT
 
@@ -63,6 +68,7 @@ hookbuster will automatically register for all of the [webhook firehose](https:/
   "webex": "^1.72.6"
 }
 ```
+
 ## A note about "read receipts"
 
 In addition to adding support for Webex Teams events via websocket, the Webex JSSDK also introduces a new memberships:seen event which effectively notifies an application when a member of a space has seen messages posted in that space. As of September, 2019, there is not yet a corresponding webhook, and consequently this event is not one that is delivered via the [webhook firehose](https://developer.webex.com/docs/api/guides/webhooks/the-firehose-webhook). Since this app is designed primarily as a way to get webhook events to applications running behind a firewall, by default it does NOT register for membership:seen events.
