@@ -1,7 +1,7 @@
 const readline = require('readline');
 const {fonts} = require('../util/fonts');
 
-const firehose_resource_names = ["rooms", "messages", "memberships"];
+const firehose_resource_names = ["rooms", "messages", "memberships", "attachmentActions"];
 const options = {
 
     rooms: {
@@ -40,7 +40,15 @@ const options = {
             //'seen',
             'deleted'
         ]
-    }
+    },
+    attachmentActions: {
+        alias: 'aa',
+        description: 'attachmentActions',
+        events: [
+            'created'
+        ]
+    },
+
 
 };
 
@@ -138,7 +146,9 @@ function requestResource() {
             'a - all, ' +
             options.rooms.alias + ' - ' + options.rooms.description + ', '
             + options.messages.alias + ' - ' + options.messages.description + ', '
-            + options.memberships.alias + ' - ' + options.memberships.description
+            + options.memberships.alias + ' - ' + options.memberships.description + ', '
+            + options.attachmentActions.alias + ' - ' + options.attachmentActions.description
+
             + ' ]'),
             (resource_alias) => {
 
@@ -162,6 +172,10 @@ function requestResource() {
 
                         case options.memberships.alias:
                             resolve(options.memberships);
+                            break;
+
+                        case options.attachmentActions.alias:
+                            resolve(options.attachmentActions);
                             break;
 
                         default:

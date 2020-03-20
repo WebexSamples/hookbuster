@@ -38,13 +38,19 @@ By default the app will run in "demonstration mode" with a command line interfac
 INFO: token authenticated as Bot
 ? Enter a port you will forward messages to > 5000
 ! 5000
-? Select resource [ a - all, r - rooms, m - messages, mm - memberships ] > m
-! MESSAGES
-? Select event [  a - all, c - created, d - deleted ] > a
-! ALL
+? Select resource [ a - all, r - rooms, m - messages, mm - memberships, aa - attachmentActions ] > a
+INFO: Listening for events from the rooms resource
+INFO: Registered handler to forward  rooms:created events
+INFO: Registered handler to forward  rooms:updated events
 INFO: Listening for events from the messages resource
 INFO: Registered handler to forward  messages:created events
 INFO: Registered handler to forward  messages:deleted events
+INFO: Listening for events from the memberships resource
+INFO: Registered handler to forward  memberships:created events
+INFO: Registered handler to forward  memberships:updated events
+INFO: Registered handler to forward  memberships:deleted events
+INFO: Listening for events from the attachmentActions resource
+INFO: Registered handler to forward  attachmentActions:created events
 ```
 
 **Tip**: you can use the [javabot](https://github.com/WebexSamples/javabot) to test how this app works. Start **javabot** with your access token and enter a localhost port, where **javabot** will listen to incoming messages. While both apps are running, open a Webex Teams space with the bot, whose access token you used and say **hello**. It should greet you back. :wave:
@@ -65,7 +71,7 @@ hookbuster will automatically register for all of the [webhook firehose](https:/
   "asciiart-logo": "^0.2.6",
   "chalk": "^2.4.2",
   "clear": "^0.1.0",
-  "webex": "^1.72.6"
+  "webex": "^1.80.154"
 }
 ```
 

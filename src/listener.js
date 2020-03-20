@@ -2,7 +2,6 @@ Webex = require('webex');
 
 const http = require('http');
 const {fonts} = require('../util/fonts');
-const {options} = require('./cli');
 
 let webex;
 
