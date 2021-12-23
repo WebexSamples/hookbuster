@@ -160,6 +160,7 @@ function _forwardEvent(event_object) {
     const options = {
         hostname: 'localhost',
         port: specifications.port,
+        path: specifications.path,
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -180,7 +181,7 @@ function _forwardEvent(event_object) {
     req.write(event);
     req.end();
 
-    console.log(fonts.info(`event forwarded to localhost:${specifications.port}`));
+    console.log(fonts.info(`event forwarded to localhost:${specifications.port}${specifications.path}`));
     console.log(fonts.info(event));
 }
 

@@ -126,6 +126,30 @@ function requestPort() {
 }
 
 /**
+ * Prompts for path in the console.
+ *
+ * @return Promise<String> either the answer or an error
+ *
+ * */
+ function requestPath() {
+
+    return new Promise((resolve, reject) => {
+
+        const rl = readline.createInterface({
+            input: process.stdin,
+            output: process.stdout
+        });
+
+        rl.question(fonts.question('Enter the path you want to send request to, eg: /event, Optional'), (answer) => {
+
+            rl.close();
+            resolve(answer);
+        });
+
+    });
+}
+
+/**
  * Prompts for resource in the console. Uses aliases of the
  * {options} Object.
  *
@@ -262,6 +286,7 @@ module.exports = {
     welcome,
     requestToken,
     requestPort,
+    requestPath,
     requestResource,
     requestEvent,
     options

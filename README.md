@@ -61,8 +61,23 @@ If the following environment variables are set:
 
 * TOKEN
 * PORT
+* REQ_PATH
 
 hookbuster will automatically register for all of the [webhook firehose](https://developer.webex.com/docs/api/guides/webhooks/the-firehose-webhook) events, using the TOKEN and then forward any received events to localhost:PORT
+
+**use .env to set environment variables for development**
+
+```bash
+# Create a .env file in the root directory of the project
+touch .env
+
+# In the .env file, enter the three environment variables key pairs
+TOKEN=<Your bot access token>
+PORT=<Your bot service port>
+# The request path of your bot service, eg: /events, left empty for none request path
+# The process.env.PATH is a reverse env variable for system global environment, use REQ_PATH instead
+REQ_PATH=
+```
 
 ## Dependencies
 

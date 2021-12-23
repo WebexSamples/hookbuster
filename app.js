@@ -1,10 +1,14 @@
 const listener = require('./src/listener');
 const cli = require('./src/cli');
 const {fonts } = require('./util/fonts');
+const dotenv = require('dotenv');
+
+dotenv.config();
 
 let specs = {
     access_token: '',
     port: 0,
+    path: null,
     selection: {
         resource: '',
         event: ''
@@ -56,7 +60,7 @@ function gatherPort() {
             console.log(fonts.answer(specs.port));
 
             //listener.runListener(specs);
-            gatherResource();
+            gatherPath();
         } else {
             console.log(fonts.error('not a number'));
             gatherPort();
@@ -67,6 +71,20 @@ function gatherPort() {
         //port empty
         console.log(fonts.error(reason));
         gatherPort();
+    });
+}
+
+function gatherPath() {
+    cli.requestPath().then(path => {
+
+        specs.path = path
+        console.log(fonts.answer(specs.path));
+        //listener.runListener(specs);
+        gatherResource();
+
+    }).catch(reason => {
+        console.log(fonts.error(reason));
+        gatherPath();
     });
 }
 
@@ -120,6 +138,8 @@ function gatherEvent(resource) {
 if ((process.env.TOKEN) && (process.env.PORT)) {
     specs.port = parseInt(process.env.PORT);
     specs.access_token = process.env.TOKEN;
+    // The process.env.PATH is a reverse env variable for system global environment, use REQ_PATH instead
+    specs.path = process.env.REQ_PATH;
     listener.verifyAccessToken(process.env.TOKEN).then((person) => {
         console.log(fonts.info(`token authenticated as ${person.displayName}`));
         specs.selection.event = 'all';
