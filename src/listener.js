@@ -163,7 +163,7 @@ function _forwardEvent(event_object) {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            'Content-Length': event.length
+            'Content-Length': Buffer.from(event).length
         }
     };
 
