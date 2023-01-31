@@ -1,6 +1,6 @@
 const listener = require('./src/listener');
 const cli = require('./src/cli');
-const {fonts } = require('./util/fonts');
+const { fonts } = require('./util/fonts');
 
 let specs = {
     access_token: '',
@@ -77,7 +77,7 @@ function gatherResource() {
         if (Array.isArray(resource)) {
             // user selected "all"
             specs.selection.event = 'all';
-            for (let resource_name of resource) { 
+            for (let resource_name of resource) {
                 listener.runListener(specs, cli.options[resource_name]);
             }
             return;
@@ -120,17 +120,18 @@ function gatherEvent(resource) {
 if ((process.env.TOKEN) && (process.env.PORT)) {
     specs.port = parseInt(process.env.PORT);
     specs.access_token = process.env.TOKEN;
+    specs.target = process.env.TARGET;
     listener.verifyAccessToken(process.env.TOKEN).then((person) => {
         console.log(fonts.info(`token authenticated as ${person.displayName}`));
         specs.selection.event = 'all';
-        for (let resource_object of cli.firehose_resource_names) { 
+        for (let resource_object of cli.firehose_resource_names) {
             listener.runListener(specs, cli.options[resource_object]);
         }
-        }).catch(reason => {
-            //token not authorized
-            console.log(fonts.error(reason));
-            process.exit(-1);
-      });
+    }).catch(reason => {
+        //token not authorized
+        console.log(fonts.error(reason));
+        process.exit(-1);
+    });
 } else {
     cli.welcome();
     gatherSpecs();
