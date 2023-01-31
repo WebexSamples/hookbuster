@@ -63,7 +63,7 @@ If the following environment variables are set:
 * TARGET
 * PORT
 
-hookbuster will automatically register for all of the [webhook firehose](https://developer.webex.com/docs/api/guides/webhooks/the-firehose-webhook) events, using the TOKEN and then forward any received events to TARGET:PORT
+hookbuster will automatically register for all of the [webhook firehose](https://developer.webex.com/docs/api/guides/webhooks/the-firehose-webhook) events, using the TOKEN and then forward any received events to TARGET:PORT.
 
 ## Dependencies
 
