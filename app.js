@@ -121,6 +121,9 @@ if ((process.env.TOKEN) && (process.env.PORT)) {
     specs.port = parseInt(process.env.PORT);
     specs.access_token = process.env.TOKEN;
     specs.target = process.env.TARGET;
+    if (!specs.target) {
+        specs.target = 'localhost'
+    }
     listener.verifyAccessToken(process.env.TOKEN).then((person) => {
         console.log(fonts.info(`token authenticated as ${person.displayName}`));
         specs.selection.event = 'all';

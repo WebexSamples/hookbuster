@@ -13,7 +13,7 @@ This application demonstrates how to register for Webex Teams `message`, `member
 
 ## Install and run
 
-* clone the repo 
+* clone the repo
 * ```npm install```
 * ```node app.js```
 
@@ -63,7 +63,7 @@ If the following environment variables are set:
 * TARGET
 * PORT
 
-hookbuster will automatically register for all of the [webhook firehose](https://developer.webex.com/docs/api/guides/webhooks/the-firehose-webhook) events, using the TOKEN and then forward any received events to TARGET:PORT.
+hookbuster will automatically register for all of the [webhook firehose](https://developer.webex.com/docs/api/guides/webhooks/the-firehose-webhook) events, using the TOKEN and then forward any received events to TARGET:PORT. If TARGET is not set it defaults to `localhost`
 
 ## Dependencies
 
