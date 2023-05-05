@@ -63,7 +63,7 @@ If the following environment variables are set:
 * TARGET
 * PORT
 
-hookbuster will automatically register for all of the [webhook firehose](https://developer.webex.com/docs/api/guides/webhooks/the-firehose-webhook) events, using the TOKEN and then forward any received events to TARGET:PORT. If TARGET is not set it defaults to `localhost`
+hookbuster will automatically register for all of the webhook firehose events, using the TOKEN and then forward any received events to TARGET:PORT. If you only set PORT and TOKEN in your environmental variables, then TARGET will be defaulted to localhost. Otherwise (if you do not use environmental variables) you will be prompted to enter a target manually.
 
 ## Dependencies
 
