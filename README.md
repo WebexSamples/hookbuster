@@ -7,13 +7,13 @@ This application demonstrates how to register for Webex Teams `message`, `member
 ## Requirements
 
 * **Webex Teams access token**: this will be used by the hookbuster to create websocket listeners. Ideally you would use the access token that is used by the application that hookbuster will forward the events to.
-* **open port on localhost**: this is where the incoming HTTP requests will be forwarded to, so that the listening app can process them
+* **open port on TARGET**: this is where the incoming HTTP requests will be forwarded to, so that the listening app can process them
 * **node.js**: will be used to run the app locally
 * **npm**: will be used to install dependencies
 
 ## Install and run
 
-* clone the repo 
+* clone the repo
 * ```npm install```
 * ```node app.js```
 
@@ -60,9 +60,10 @@ INFO: Registered handler to forward  attachmentActions:created events
 If the following environment variables are set:
 
 * TOKEN
+* TARGET
 * PORT
 
-hookbuster will automatically register for all of the [webhook firehose](https://developer.webex.com/docs/api/guides/webhooks/the-firehose-webhook) events, using the TOKEN and then forward any received events to localhost:PORT
+hookbuster will automatically register for all of the webhook firehose events, using the TOKEN and then forward any received events to TARGET:PORT. If you only set PORT and TOKEN in your environmental variables, then TARGET will be defaulted to localhost. Otherwise (if you do not use environmental variables) you will be prompted to enter a target manually.
 
 ## Dependencies
 

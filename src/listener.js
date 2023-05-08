@@ -1,7 +1,7 @@
 Webex = require('webex');
 
 const http = require('http');
-const {fonts} = require('../util/fonts');
+const { fonts } = require('../util/fonts');
 
 let webex;
 
@@ -34,8 +34,8 @@ function verifyAccessToken(accessToken) {
             resolve(person);
 
         }).catch(() => {
-                reject('not authenticated');
-            }
+            reject('not authenticated');
+        }
         );
     });
 
@@ -55,7 +55,7 @@ function runListener(specs, resource) {
     _startListener(resource, event);
 
     //Ctrl+C pushed for exit
-    process.on('SIGINT', () =>{
+    process.on('SIGINT', () => {
 
         //nneds to run first to deregister listeners
         _stopListener(resource_object, event);
@@ -90,34 +90,34 @@ function _startListener(resource, event) {
     // register the listener for events on the messages resource
     webex[resource_name].listen().then(() => {
         console.log(fonts.info(
-          `Listening for events from the ${resource_name} resource`));
+            `Listening for events from the ${resource_name} resource`));
 
-      //need to register a handler for each event type
-      if (event === 'all') {
-          //each event needs its own handler
-          //if user asked for all cycle through each 
-          //event type and register each handler
-          for (let event_name of resource.events) {
-            if (event_name === 'all') {
-              continue;
+        //need to register a handler for each event type
+        if (event === 'all') {
+            //each event needs its own handler
+            //if user asked for all cycle through each 
+            //event type and register each handler
+            for (let event_name of resource.events) {
+                if (event_name === 'all') {
+                    continue;
+                }
+                // Register a handler to forward the event
+                webex[resource_name].on(event_name, event_object => _forwardEvent(event_object));
+                console.log(fonts.info(
+                    'Registered handler to forward  ' +
+                    fonts.highlight(`${resource_name}:${event_name}`) + ' events'));
             }
+        } else {
             // Register a handler to forward the event
-            webex[resource_name].on(event_name, event_object => _forwardEvent(event_object));
+            webex[resource_name].on(event, event_object => _forwardEvent(event_object));
             console.log(fonts.info(
-                'Registered handler to forward  ' +
-                fonts.highlight(`${resource_name}:${event_name}`) + ' events'));
+                'Registered handler to forward  ') +
+                fonts.highlight(`${resource_name}:${event}`) + ' events');
         }
-    } else {
-        // Register a handler to forward the event
-        webex[resource_name].on(event, event_object => _forwardEvent(event_object));
-        console.log(fonts.info(
-          'Registered handler to forward  ') +
-          fonts.highlight(`${resource_name}:${event}`) + ' events');
-        }
-  }).catch(reason => {
-      console.log(fonts.error(reason));
-      process.exit(-1);
-  });    
+    }).catch(reason => {
+        console.log(fonts.error(reason));
+        process.exit(-1);
+    });
 }
 
 function _stopListener(resource, event) {
@@ -128,7 +128,7 @@ function _stopListener(resource, event) {
     console.log(fonts.info(
         `stopping listener for ${resource_name.toUpperCase()}:${event.toUpperCase()}`)
     );
-  // turn off the event listener
+    // turn off the event listener
     webex[resource_name].stopListening();
     // deregister the handler(s) for this resource's event(s)
     if (event === 'all') {
@@ -153,12 +153,12 @@ function _forwardEvent(event_object) {
 
     //logging info to the console
     console.log(fonts.info(
-      fonts.highlight(`${event_object.resource}:${event_object.event}`) +
-      ' received'));
+        fonts.highlight(`${event_object.resource}:${event_object.event}`) +
+        ' received'));
 
     //gathering some details
     const options = {
-        hostname: 'localhost',
+        hostname: specifications.target,
         port: specifications.port,
         method: 'POST',
         headers: {
@@ -180,7 +180,7 @@ function _forwardEvent(event_object) {
     req.write(event);
     req.end();
 
-    console.log(fonts.info(`event forwarded to localhost:${specifications.port}`));
+    console.log(fonts.info(`event forwarded to ${specifications.target}:${specifications.port}`));
     console.log(fonts.info(event));
 }
 

@@ -1,5 +1,5 @@
 const readline = require('readline');
-const {fonts} = require('../util/fonts');
+const { fonts } = require('../util/fonts');
 
 const firehose_resource_names = ["rooms", "messages", "memberships", "attachmentActions"];
 const options = {
@@ -93,6 +93,36 @@ function requestToken() {
         });
     });
 
+}
+
+/**
+ * Prompts for target in the console.
+ *
+ * @return Promise<String> either the answer or an error
+ *
+ * */
+function requestTarget() {
+
+    return new Promise((resolve, reject) => {
+
+        const rl = readline.createInterface({
+            input: process.stdin,
+            output: process.stdout
+        });
+
+        rl.question(fonts.question('Enter a target you will forward messages to i.e. "localhost"'), (answer) => {
+
+            rl.close();
+
+            if (answer !== '') {
+                resolve(answer);
+            } else {
+                reject('target empty');
+            }
+
+        });
+
+    });
 }
 
 /**
@@ -261,6 +291,7 @@ module.exports = {
     options,
     welcome,
     requestToken,
+    requestTarget,
     requestPort,
     requestResource,
     requestEvent,

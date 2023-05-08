@@ -1,8 +1,9 @@
 const listener = require('./src/listener');
 const cli = require('./src/cli');
-const {fonts } = require('./util/fonts');
+const { fonts } = require('./util/fonts');
 
 let specs = {
+    target: '',
     access_token: '',
     port: 0,
     selection: {
@@ -31,7 +32,7 @@ function gatherSpecs() {
 
             console.log(fonts.info(`token authenticated as ${person.displayName}`));
             specs.access_token = token;
-            gatherPort();
+            gatherTarget();
 
         }).catch(
             reason => {
@@ -44,6 +45,28 @@ function gatherSpecs() {
     }).catch(reason => {
         console.log(fonts.error(reason));
         gatherSpecs();
+    });
+}
+
+function gatherTarget() {
+    cli.requestTarget().then(target => {
+
+        specs.target = target;
+
+        if (target.trim().length > 0) {
+            console.log(fonts.answer(specs.target));
+
+            gatherPort();
+        } else {
+            console.log(fonts.error('not a valid target. target must be "localhost" a valid IP address or hostname'));
+            gatherTarget();
+        }
+
+    }).catch(reason => {
+
+        //target empty
+        console.log(fonts.error(reason));
+        gatherTarget();
     });
 }
 
@@ -77,7 +100,7 @@ function gatherResource() {
         if (Array.isArray(resource)) {
             // user selected "all"
             specs.selection.event = 'all';
-            for (let resource_name of resource) { 
+            for (let resource_name of resource) {
                 listener.runListener(specs, cli.options[resource_name]);
             }
             return;
@@ -118,19 +141,25 @@ function gatherEvent(resource) {
 
 
 if ((process.env.TOKEN) && (process.env.PORT)) {
-    specs.port = parseInt(process.env.PORT);
     specs.access_token = process.env.TOKEN;
+    specs.port = parseInt(process.env.PORT);
+    if (process.env.TARGET) {
+        specs.target = process.env.TARGET
+    } else {
+        specs.target = 'localhost'
+    }
     listener.verifyAccessToken(process.env.TOKEN).then((person) => {
         console.log(fonts.info(`token authenticated as ${person.displayName}`));
+        console.log(fonts.info(`forwarding target set as ${specs.target}`));
         specs.selection.event = 'all';
-        for (let resource_object of cli.firehose_resource_names) { 
+        for (let resource_object of cli.firehose_resource_names) {
             listener.runListener(specs, cli.options[resource_object]);
         }
-        }).catch(reason => {
-            //token not authorized
-            console.log(fonts.error(reason));
-            process.exit(-1);
-      });
+    }).catch(reason => {
+        //token not authorized
+        console.log(fonts.error(reason));
+        process.exit(-1);
+    });
 } else {
     cli.welcome();
     gatherSpecs();
