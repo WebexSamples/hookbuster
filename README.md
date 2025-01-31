@@ -78,7 +78,7 @@ hookbuster will automatically register for all of the webhook firehose events, u
 
 ## A note about "read receipts"
 
-In addition to adding support for Webex Teams events via websocket, the Webex JSSDK also introduces a new memberships:seen event which effectively notifies an application when a member of a space has seen messages posted in that space. As of September, 2019, there is not yet a corresponding webhook, and consequently this event is not one that is delivered via the [webhook firehose](https://developer.webex.com/docs/api/guides/webhooks/the-firehose-webhook). Since this app is designed primarily as a way to get webhook events to applications running behind a firewall, by default it does NOT register for membership:seen events.
+In addition to adding support for Webex Teams events via websocket, the Webex JSSDK also introduces a new memberships:seen event which effectively notifies an application when a member of a space has seen messages posted in that space. As of September, 2019, there is not yet a corresponding webhook, and consequently this event is not one that is delivered via the [webhook firehose](https://developer.webex.com/docs/api/guides/webhooks#the-firehose-webhook). Since this app is designed primarily as a way to get webhook events to applications running behind a firewall, by default it does NOT register for membership:seen events.
 
 If you would like to add membership:seen (read receipt) event processing to your application, simply uncomment the `seen` element in the `object.memberships` object defined near the top of [cli.js](./src/cli.js)
 
