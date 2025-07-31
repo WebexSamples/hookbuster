@@ -182,9 +182,9 @@ Events are forwarded as JSON HTTP POST requests with the following structure:
 {
   "dependencies": {
     "asciiart-logo": "^0.2.6",
-    "chalk": "^2.4.2",
+    "chalk": "^5.4.1",
     "clear": "^0.1.0",
-    "webex": "^1.80.154"
+    "webex-node": "^3.8.1"
   }
 }
 ```
@@ -220,7 +220,7 @@ Events are forwarded as JSON HTTP POST requests with the following structure:
 
 ## 🔐 Read Receipts - A Special Note
 
-In addition to adding support for Webex events via websocket, the Webex JSSDK also introduces a new memberships:seen event which effectively notifies an application when a member of a space has seen messages posted in that space. As of September, 2019, there is not yet a corresponding webhook, and consequently this event is not one that is delivered via the [webhook firehose](https://developer.webex.com/docs/api/guides/webhooks/the-firehose-webhook). Since this app is designed primarily as a way to get webhook events to applications running behind a firewall, by default it does NOT register for membership:seen events.
+In addition to adding support for Webex events via websocket, the Webex JSSDK also introduces a new memberships:seen event which effectively notifies an application when a member of a space has seen messages posted in that space. As of September, 2019, there is not yet a corresponding webhook, and consequently this event is not one that is delivered via the [webhook firehose](https://developer.webex.com/messaging/docs/api/guides/webhooks#the-firehose-webhook). Since this app is designed primarily as a way to get webhook events to applications running behind a firewall, by default it does NOT register for membership:seen events.
 
 If you would like to add membership:seen (read receipt) event processing to your application, simply uncomment the `seen` element in the `object.memberships` object defined near the top of [cli.js](./src/cli.js).
 
@@ -330,16 +330,16 @@ Hookbuster provides detailed console logging:
 Enable detailed logging by modifying the Webex SDK initialization:
 
 ```javascript
-webex = Webex.init({
-    credentials: {
-        access_token: accessToken
-    },
-    config: {
-        logger: {
-            level: 'debug'
+    webex = Webex.init({
+        config: {
+            logger: {
+                level: 'debug'
+            }
+        },
+        credentials: {
+            access_token: accessToken
         }
-    }
-});
+    });
 ```
 
 ## 🔄 Graceful Shutdown
@@ -387,7 +387,7 @@ Hookbuster handles graceful shutdown with Ctrl+C:
 
 ```dockerfile
 # Dockerfile included
-FROM node:19
+FROM node:22
 RUN git clone "https://github.com/WebexSamples/hookbuster.git"
 WORKDIR /hookbuster
 RUN npm install
@@ -441,7 +441,7 @@ This project is licensed under the terms specified in the [LICENSE](LICENSE) fil
 ## 🔗 Related Projects
 
 - [Javabot](https://github.com/WebexSamples/javabot): Java-based Webex bot for testing
-- [Webex JS SDK](https://github.com/webex/webex-js-sdk): Official JavaScript SDK
+- [Webex JS SDK](https://github.com/webex/webex-js-sdk/tree/next/packages/webex-node): Official JavaScript SDK
 - [Webex Node Bot Framework](https://github.com/WebexCommunity/webex-node-bot-framework): Node.js bot framework
 
 ## 📚 Additional Resources
@@ -455,7 +455,7 @@ This project is licensed under the terms specified in the [LICENSE](LICENSE) fil
 
 - Create an issue in this repository
 - Review [Webex Developer Documentation](https://developer.webex.com/docs)
-- Join the [Webex Developer Community](https://developer.webex.com/community)
+- Join the [Webex Developer Community](https://community.cisco.com/t5/webex-for-developers/bd-p/disc-webex-developers)
 
 ---
 
