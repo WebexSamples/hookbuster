@@ -1,7 +1,7 @@
-Webex = require('webex');
+import Webex from 'webex-node';
 
-const http = require('http');
-const { fonts } = require('../util/fonts');
+import http from 'http';
+import { fonts } from '../util/fonts.js';
 
 let webex;
 
@@ -23,22 +23,35 @@ let runningListeners = 0;
  * */
 let specifications = {};
 
-
 function verifyAccessToken(accessToken) {
-
-    _initializeWebex(accessToken);
-
     return new Promise((resolve, reject) => {
+        const uncaughtExceptionHandler = (error) => {
+            if (error.message.includes('the provided token is not a valid format')) {
+                process.removeListener('uncaughtException', uncaughtExceptionHandler);
+                reject(error.message);
+            } else {
+                throw error;
+            }
+        };
 
-        webex.people.get('me').then(person => {
-            resolve(person);
+        // Start listening for uncaught exceptions just for this operation.
+        process.on('uncaughtException', uncaughtExceptionHandler);
 
-        }).catch(() => {
-            reject('not authenticated');
+        try {
+            _initializeWebex(accessToken);
+            webex.people.get('me').then(person => {
+                process.removeListener('uncaughtException', uncaughtExceptionHandler);
+                resolve(person);
+            }).catch((apiError) => {
+                process.removeListener('uncaughtException', uncaughtExceptionHandler);
+                const errorMessage = apiError.body?.message || 'The token is not valid or has expired.';
+                reject(errorMessage);
+            });
+        } catch (syncError) {
+            process.removeListener('uncaughtException', uncaughtExceptionHandler);
+            reject(syncError.message);
         }
-        );
     });
-
 }
 
 /**
@@ -71,11 +84,20 @@ function runListener(specs, resource) {
 
 function _initializeWebex(accessToken) {
     webex = Webex.init({
+        config: {
+            logger: {
+                level: 'error'
+            }
+        },
         credentials: {
             access_token: accessToken
         }
     });
+    webex.once('ready', () => {
+        console.log(fonts.info('Webex Initialized'));
+    })
 }
+
 
 /**
  * Starts a websocket listener for the selected resource
@@ -90,7 +112,7 @@ function _startListener(resource, event) {
     // register the listener for events on the messages resource
     webex[resource_name].listen().then(() => {
         console.log(fonts.info(
-            `Listening for events from the ${resource_name} resource`));
+            'Listening for events from the ' + fonts.highlight(`${resource_name}`) + ' resource'));
 
         //need to register a handler for each event type
         if (event === 'all') {
@@ -104,7 +126,7 @@ function _startListener(resource, event) {
                 // Register a handler to forward the event
                 webex[resource_name].on(event_name, event_object => _forwardEvent(event_object));
                 console.log(fonts.info(
-                    'Registered handler to forward  ' +
+                    'Registered handler to forward ' +
                     fonts.highlight(`${resource_name}:${event_name}`) + ' events'));
             }
         } else {
@@ -149,7 +171,7 @@ function _stopListener(resource, event) {
  * @param event JSON string of request
  * */
 function _forwardEvent(event_object) {
-    let event = JSON.stringify(event_object);
+    let event = JSON.stringify(event_object, null, 4);
 
     //logging info to the console
     console.log(fonts.info(
@@ -181,10 +203,12 @@ function _forwardEvent(event_object) {
     req.end();
 
     console.log(fonts.info(`event forwarded to ${specifications.target}:${specifications.port}`));
+    //data = JSON.stringify(event, null, 4);
+    //console.log(event);
     console.log(fonts.info(event));
 }
 
-module.exports = {
+export default {
     runListener,
     verifyAccessToken
 };
