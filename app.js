@@ -1,6 +1,6 @@
-const listener = require('./src/listener');
-const cli = require('./src/cli');
-const { fonts } = require('./util/fonts');
+import listener from './src/listener.js';
+import cli from './src/cli.js';
+import { fonts } from './util/fonts.js';
 
 let specs = {
     target: '',
@@ -25,8 +25,6 @@ let specs = {
 function gatherSpecs() {
 
     cli.requestToken().then(token => {
-
-        console.log(fonts.answer(token));
 
         listener.verifyAccessToken(token).then((person) => {
 

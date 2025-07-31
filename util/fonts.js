@@ -1,6 +1,6 @@
-const chalk = require('chalk');
+import chalk from 'chalk';
 
-let fonts = {
+export const fonts = {
     question: (text) => {
         return chalk.bold('? ' + text + ' > ')
     },
@@ -8,16 +8,17 @@ let fonts = {
         return chalk.greenBright('! ' + text)
     },
     info: (text) => {
-        return chalk.cyanBright('INFO: ' + text)
+        return chalk.blueBright('INFO: ' + text)
+        //return chalk.cyanBright('INFO: ' + text)
     },
     error: (text) => {
-        return (chalk.redBright('ERROR: ' + text))
+        return chalk.bold.red('ERROR: ' + text)
     },
     highlight: (text) => {
-        return (chalk.bgRed(text))
+        return chalk.magenta(text)
     }
 };
 
-module.exports = {fonts};
+
 
 

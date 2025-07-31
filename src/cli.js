@@ -1,5 +1,8 @@
-const readline = require('readline');
-const { fonts } = require('../util/fonts');
+import readline from 'readline';
+import { fonts } from '../util/fonts.js';
+import clear from 'clear';
+import config from '../package.json' with { type: 'json' };;
+import logo from 'asciiart-logo';
 
 const firehose_resource_names = ["rooms", "messages", "memberships", "attachmentActions"];
 const options = {
@@ -56,10 +59,6 @@ const options = {
  * Prints logo
  * */
 function welcome() {
-
-    const clear = require('clear');
-    const config = require('../package.json');
-    const logo = require('asciiart-logo');
 
     clear();
     console.log(logo(config).render());
@@ -286,7 +285,7 @@ function requestEvent(event_pool) {
 }
 
 
-module.exports = {
+export default {
     firehose_resource_names,
     options,
     welcome,
